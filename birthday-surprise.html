@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A little surprise for you 🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400;1,700&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#14061f;--wine:#2a0c3d;--rose:#ff6b9a;--blush:#ffe3ee;--gold:#ffd77a;--ink:#fff7fb}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:radial-gradient(ellipse at 50% 120%,#5a1a5e 0%,var(--bg) 60%);color:var(--ink);font-family:'Nunito',system-ui,sans-serif}
+canvas{position:fixed;inset:0;width:100%;height:100%}
+#fx{pointer-events:none;z-index:50}
+.page{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center;opacity:0;pointer-events:none;transform:scale(.94);filter:blur(10px);transition:all .9s cubic-bezier(.2,.8,.2,1);z-index:5;overflow-y:auto}
+.page.on{opacity:1;pointer-events:auto;transform:none;filter:none}
+h1,h2{font-family:'Fraunces',Georgia,serif;font-weight:700;line-height:1.15}
+h1{font-size:clamp(2rem,7vw,3.8rem)}
+h2{font-size:clamp(1.6rem,5vw,2.6rem);font-style:italic;font-weight:400}
+p.sub{font-size:1.05rem;opacity:.85;max-width:34ch}
+.gold{color:var(--gold)}
+.btn{font:800 1rem 'Nunito';color:#3a0a2e;background:linear-gradient(135deg,var(--gold),#ffb3c9);border:0;border-radius:99px;padding:14px 30px;cursor:pointer;box-shadow:0 8px 30px #ff6b9a66;transition:transform .2s}
+.btn:hover{transform:translateY(-3px) scale(1.04)}
+.btn:focus-visible,.card:focus-visible,.candle:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
+.hide{visibility:hidden}
+#dots{position:fixed;bottom:14px;left:0;right:0;display:flex;justify-content:center;gap:8px;z-index:20}
+#dots i{width:8px;height:8px;border-radius:50%;background:#fff3;transition:.4s}
+#dots i.on{background:var(--rose);width:24px;border-radius:9px}
+
+/* page 1 gift */
+.gift{font-size:clamp(6rem,28vw,10rem);cursor:pointer;background:none;border:0;animation:wob 2.2s infinite;filter:drop-shadow(0 0 40px #ff6b9a)}
+@keyframes wob{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg) scale(1.08)}}
+
+/* page 2 cake */
+.cake{position:relative;width:240px;height:210px;margin-top:40px}
+.tier{position:absolute;left:50%;transform:translateX(-50%);border-radius:14px 14px 10px 10px}
+.t1{bottom:0;width:240px;height:80px;background:linear-gradient(#ff8db1,#ff5d8f)}
+.t2{bottom:80px;width:180px;height:62px;background:linear-gradient(#ffeaf1,#ffc2d6)}
+.t3{bottom:142px;width:120px;height:46px;background:linear-gradient(#ffe39a,#ffc95a)}
+.tier::before{content:"";position:absolute;top:0;left:0;right:0;height:16px;background:#fff;border-radius:14px 14px 40% 40%/14px 14px 100% 100%;opacity:.9}
+.candle{position:absolute;bottom:186px;width:10px;height:44px;border-radius:4px;background:repeating-linear-gradient(45deg,#fff 0 6px,#ff6b9a 6px 12px);border:0;cursor:pointer}
+.flame{position:absolute;left:50%;top:-26px;width:16px;height:26px;margin-left:-8px;background:radial-gradient(#fff 15%,#ffd77a 45%,#ff8a3d 80%);border-radius:50% 50% 50% 50%/60% 60% 40% 40%;box-shadow:0 0 22px 8px #ffb34799;animation:fl .15s infinite alternate;transition:opacity .4s,transform .4s}
+@keyframes fl{to{transform:scale(1.1,.92) rotate(3deg)}}
+.candle.out .flame{opacity:0;transform:scale(.2)}
+.candle.out::after{content:"";position:absolute;left:3px;top:-40px;width:4px;height:36px;background:linear-gradient(#fff8,transparent);filter:blur(3px);animation:sm 1.6s forwards}
+@keyframes sm{to{transform:translateY(-30px);opacity:0}}
+
+/* page 3 cards */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:min(640px,100%)}
+@media(max-width:520px){.grid{grid-template-columns:repeat(2,1fr)}}
+.card{perspective:700px;aspect-ratio:3/4;cursor:pointer;background:none;border:0}
+.card .in{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.card.flip .in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px}
+.front{background:linear-gradient(145deg,#ff6b9a,#9b3dbd);font-size:2.4rem;box-shadow:0 10px 30px #0006}
+.back{transform:rotateY(180deg);background:linear-gradient(145deg,#fff2f7,#ffd0e0);color:#4a0f3a;box-shadow:0 0 30px #ffd77a88}
+.back b{font:700 1.25rem 'Fraunces',serif}
+.back span{font-size:1.8rem}
+.back small{font-size:.72rem;opacity:.8}
+
+/* page 4 typewriter */
+#type{font:italic 400 clamp(1.2rem,4.2vw,1.9rem)/1.6 'Fraunces',serif;min-height:12em;max-width:26ch;text-align:left}
+#type div{margin:.4em 0}
+.caret::after{content:"▍";color:var(--rose);animation:bl .7s infinite}
+@keyframes bl{50%{opacity:0}}
+
+/* page 5 finale */
+.letter{max-width:46ch;background:#ffffff12;border:1px solid #ffffff30;backdrop-filter:blur(8px);border-radius:26px;padding:28px 26px;font-family:'Fraunces',serif;font-size:1.08rem;line-height:1.75}
+.name{font:italic 700 clamp(2.6rem,11vw,5rem)/1 'Fraunces',serif;background:linear-gradient(90deg,var(--gold),#ff9ec0,var(--gold));background-size:200%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 4s linear infinite}
+@keyframes sh{to{background-position:200%}}
+.petal{position:fixed;top:-30px;z-index:30;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<canvas id="fx"></canvas>
+
+<!-- PAGE 1 -->
+<section class="page on">
+  <p class="sub">Psst… someone left a surprise just for you</p>
+  <button class="gift" id="gift" aria-label="Open the gift">🎁</button>
+  <h1>Hey, <span class="gold" data-name></span> 💖</h1>
+  <p class="sub">Tap the gift to open it</p>
+</section>
+
+<!-- PAGE 2 -->
+<section class="page">
+  <h1>It’s your day, <span class="gold" data-name></span> 🎂</h1>
+  <p class="sub" id="cakeMsg">Tap each candle to blow it out</p>
+  <div class="cake">
+    <div class="tier t3"></div><div class="tier t2"></div><div class="tier t1"></div>
+    <button class="candle" style="left:78px" aria-label="Candle 1"><div class="flame"></div></button>
+    <button class="candle" style="left:115px" aria-label="Candle 2"><div class="flame"></div></button>
+    <button class="candle" style="left:152px" aria-label="Candle 3"><div class="flame"></div></button>
+  </div>
+  <button class="btn hide" id="n2" style="margin-top:24px">See what’s next ✨</button>
+</section>
+
+<!-- PAGE 3 -->
+<section class="page">
+  <h2>Tap the cards to find what I call you</h2>
+  <div class="grid" id="grid"></div>
+  <p class="sub" id="count">0 of 8 found</p>
+  <button class="btn hide" id="n3">Keep going 💌</button>
+</section>
+
+<!-- PAGE 4 -->
+<section class="page">
+  <h2>Why you’re so special</h2>
+  <div id="type"></div>
+  <button class="btn hide" id="n4">One last thing… 🎀</button>
+</section>
+
+<!-- PAGE 5 -->
+<section class="page">
+  <h1>Happy Birthday</h1>
+  <div class="name" data-name></div>
+  <div class="letter">
+    <p>To my pretty, beautiful, sweetheart — you are the gentlest kind of magic. Your smile makes ordinary days feel like festivals, and your laugh is my favourite song.</p>
+    <p style="margin-top:.8em">May this year bring you every wish you whisper, every dream you chase, and every happiness you deserve, my gorgeous, precious angel.</p>
+    <p style="margin-top:.8em" class="gold">You are loved more than words can say. 💖</p>
+    <p style="margin-top:.8em;text-align:right">Forever yours, <i data-from></i></p>
+  </div>
+  <button class="btn" id="again">🎆 Surprise me again</button>
+</section>
+
+<div id="dots"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+
+<script>
+/* ✏️ CHANGE THESE TWO */
+const HER_NAME = "Anjali";
+const FROM_NAME = "Someone who adores you";
+
+document.querySelectorAll('[data-name]').forEach(e=>e.textContent=HER_NAME);
+document.querySelector('[data-from]').textContent=FROM_NAME;
+
+const pages=[...document.querySelectorAll('.page')],dots=[...document.querySelectorAll('#dots i')];
+let cur=0;
+function go(i){pages[cur].classList.remove('on');dots[cur].classList.remove('on');cur=i;pages[i].classList.add('on');dots[i].classList.add('on');
+  if(i===3)typeIt(); if(i===4)finale();}
+
+/* sounds */
+let ac;function note(f,t=0,d=.25){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.12,ac.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+t+d);o.connect(g).connect(ac.destination);o.start(ac.currentTime+t);o.stop(ac.currentTime+t+d)}catch(e){}}
+function tune(){[262,262,294,262,349,330].forEach((f,i)=>note(f,i*.32,.3))}
+
+/* starfield */
+const bg=document.getElementById('bg'),bc=bg.getContext('2d');let stars=[];
+function size(){for(const c of [bg,fx]){c.width=innerWidth;c.height=innerHeight}stars=Array.from({length:110},()=>({x:Math.random()*bg.width,y:Math.random()*bg.height,r:Math.random()*1.6+.3,p:Math.random()*6}))}
+const fx=document.getElementById('fx'),fc=fx.getContext('2d');addEventListener('resize',size);size();
+function drawBg(t){bc.clearRect(0,0,bg.width,bg.height);stars.forEach(s=>{bc.globalAlpha=.4+.6*Math.abs(Math.sin(t/900+s.p));bc.fillStyle='#ffe9f3';bc.beginPath();bc.arc(s.x,s.y,s.r,0,7);bc.fill()});}
+
+/* particles: confetti + fireworks */
+let ps=[];const cols=['#ff6b9a','#ffd77a','#fff','#c77dff','#7df0d3'];
+function confetti(n=140){for(let i=0;i<n;i++)ps.push({x:innerWidth/2,y:innerHeight*.55,vx:(Math.random()-.5)*14,vy:-Math.random()*15-4,g:.28,s:Math.random()*7+4,c:cols[i%5],l:160,sq:1})}
+function boom(x,y){const c=cols[Math.random()*5|0];for(let i=0;i<70;i++){const a=Math.PI*2*i/70,v=Math.random()*5+2;ps.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,g:.06,s:2.4,c,l:80})}}
+function loop(t){drawBg(t);fc.clearRect(0,0,fx.width,fx.height);
+  ps=ps.filter(p=>p.l-->0);ps.forEach(p=>{p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.vx*=.99;fc.globalAlpha=Math.min(1,p.l/40);fc.fillStyle=p.c;p.sq?fc.fillRect(p.x,p.y,p.s,p.s*.6):(fc.beginPath(),fc.arc(p.x,p.y,p.s,0,7),fc.fill())});
+  requestAnimationFrame(loop)}
+requestAnimationFrame(loop);
+
+/* page 1 */
+document.getElementById('gift').onclick=()=>{confetti(90);note(523);note(659,.12);note(784,.24);setTimeout(()=>go(1),900)};
+
+/* page 2 */
+const candles=[...document.querySelectorAll('.candle')];
+candles.forEach(c=>c.onclick=()=>{if(c.classList.contains('out'))return;c.classList.add('out');note(300,0,.15);
+  if(candles.every(x=>x.classList.contains('out'))){document.getElementById('cakeMsg').textContent='Make a wish… 🌟 and may it come true!';confetti();tune();document.getElementById('n2').classList.remove('hide')}});
+document.getElementById('n2').onclick=()=>go(2);
+
+/* page 3 */
+const words=[["Pretty","🌸","like a spring morning"],["Beautiful","✨","inside and out"],["Sweetheart","💖","my favourite hello"],["Gorgeous","🌹","a stunner, always"],["Precious","💎","rarer than gold"],["Darling","🦋","soft as butterflies"],["Angel","🕊️","pure kindness"],["Cutie","🧸","too cute to handle"]];
+const grid=document.getElementById('grid');let found=0;
+words.forEach(([w,e,s])=>{const b=document.createElement('button');b.className='card';b.setAttribute('aria-label','Reveal card');
+  b.innerHTML=`<div class="in"><div class="face front">💗</div><div class="face back"><span>${e}</span><b>${w}</b><small>${s}</small></div></div>`;
+  b.onclick=()=>{if(b.classList.contains('flip'))return;b.classList.add('flip');found++;note(500+found*60);
+    document.getElementById('count').textContent=found+' of 8 found';
+    if(found===8){confetti(100);document.getElementById('n3').classList.remove('hide')}};
+  grid.appendChild(b)});
+document.getElementById('n3').onclick=()=>go(3);
+
+/* page 4 */
+const lines=["Your smile could light up a whole city. 🌆","You make the hardest days feel soft. 🌷","Your kindness is the prettiest thing about you. 💫","Being around you feels like home. 🏡","And you’re getting even more amazing today. 🎈"];
+let typing=false,done=false;
+function typeIt(){if(typing||done)return;typing=true;const box=document.getElementById('type');box.innerHTML='';
+  (async()=>{for(const l of lines){const d=document.createElement('div');d.className='caret';box.appendChild(d);
+    for(const ch of l){d.textContent+=ch;await new Promise(r=>setTimeout(r,42))}
+    d.classList.remove('caret');await new Promise(r=>setTimeout(r,500))}
+    done=true;typing=false;document.getElementById('n4').classList.remove('hide')})()}
+document.getElementById('n4').onclick=()=>go(4);
+
+/* page 5 */
+let fin;
+function finale(){tune();confetti(160);clearInterval(fin);let n=0;
+  fin=setInterval(()=>{if(cur!==4||++n>40){clearInterval(fin);return}
+    boom(Math.random()*innerWidth,Math.random()*innerHeight*.55+30);
+    const p=document.createElement('div');p.className='petal';p.textContent=['🌸','🌹','💖','✨'][n%4];p.style.left=Math.random()*100+'vw';p.style.fontSize=(14+Math.random()*16)+'px';p.style.animationDuration=(5+Math.random()*4)+'s';document.body.appendChild(p);setTimeout(()=>p.remove(),9500)},650)}
+document.getElementById('again').onclick=finale;
+</script>
+</body>
+</html>
